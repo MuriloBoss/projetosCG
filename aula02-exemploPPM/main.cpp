@@ -139,9 +139,14 @@ int main(void)
 	setRecorte(&imgRecorte, &imgRecorte_aux, p1, p2 );
 
 	gravar(&imgRecorte_aux, "exercicio8.pgm");
-	
+
 	destruir(&imgRecorte_aux);
 	destruir(&imgRecorte);
+	
+
+
+
+
 	
 	cout << "Pressione uma tecla para encerrar o programa.\n";
 	getchar();

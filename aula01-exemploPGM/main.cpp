@@ -159,6 +159,24 @@ int main(void)
 
 	//Exer 14 - Criar borda em uma região;
 
+
+	//exer 15 -
+	PGM imgOriginal;
+	ler(&imgOriginal, "numeros.pgm");
+	PGM imgConvertida;
+	criar(&imgConvertida, imgOriginal.larg, imgOriginal.alt, 0);
+	tamanho = imgOriginal.alt *imgOriginal.larg;
+
+	for(int i = 0; i < tamanho; i++ ){
+		if(imgOriginal.pixels[i] > 128){
+			imgConvertida.pixels[i] = 255;
+		}else{
+			imgConvertida.pixels[i] = 0;
+		}
+	}
+	gravar(&imgConvertida, "exercicio15.pgm");
+	destruir(&imgOriginal);
+	destruir(&imgConvertida);
 	
 	cout << "Pressione uma tecla para encerrar o programa.\n";
 	getchar();
