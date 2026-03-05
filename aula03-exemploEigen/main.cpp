@@ -1,5 +1,6 @@
 #include <iostream>
 #include<cmath>
+#include "PGM.hpp"
 using namespace std;
 
 
@@ -55,12 +56,73 @@ void exerLista3F()
 	}
 }
 
+//ler a imagem de entrada e criar a imagem de saida antes de chamar a função
+void transf2D(PGM *imgE, PGM *imgS, Matrix3f M){
+	if(imgE->larg!=imgS->larg || imgE->alt!=imgS->alt)
+		return;
+	
+	//percorrer a imagem de entrada
+	for (size_t yE = 0; yE < imgE->alt; yE++)
+	{
+		for (size_t xE = 0; xE < imgE->larg; xE++)
+		{
+			Vector3f coodSaida = M * Vector3f(xE, yE, 1);
+			float xS = round(coodSaida.x());
+			float yS = round(coodSaida.y());
+
+			if(coordValida(imgS, xS, yS)){
+				setPixel(imgS, xS, yS, getPixel(imgE, xE, yE));
+			}
+		}
+		
+	}
+	
+}
+
+void transf2DInv(PGM* imgE, PGM* imgS, Matrix3f Minv)
+{
+	if (imgE->larg!=imgS->larg || imgE->alt!=imgS->alt)
+		return;
+	
+	for (size_t yS = 0; yS < imgE->alt; yS++)
+	{
+		for (size_t xS = 0; xS < imgE->alt; xS++)
+		{
+			Vector3f coordEntrada = Minv * Vector3f(xS, yS, 1);
+			float xE = round(coordEntrada.x());
+			float yE = round(coordEntrada.y());
+			if (coordValida(imgE, xE, yE))
+			{
+				setPixel (imgS, xS, yS, getPixel(imgE, xE, yE));
+			}
+		}
+	}
+}
+
 int main(void)
 {
 	setlocale(LC_ALL, "Portuguese");
 
-	cout << "Chamando exercicio 3f\n";
-	 exerLista3F();
+	//cout << "Chamando exercicio 3f\n";
+	// exerLista3F();
+
+	PGM imgE, imgS;
+	ler(&imgE, "numeros.pgm");
+	criar(&imgS, imgE.larg, imgE.alt, 0);
+
+	Vector2f pontoCentro((imgE.larg-1)/2.0, (imgE.alt-1)/2.0);
+	Matrix3f T = getTranslacao(pontoCentro.x(), pontoCentro.y());
+	Matrix3f Tinv = getTranslacao(-pontoCentro.x(), -pontoCentro.y());
+	Matrix3f R = getRotacao(45.0f);
+
+	Matrix3f M = T * R * Tinv;
+
+	Matrix3f Minv = M.inverse();
+	transf2DInv(&imgE, &imgS, Minv);
+	gravar(&imgS, "numeros_rotacaoinv.pgm");
+	transf2D (&imgE, &imgS, M);
+	gravar(&imgS, "numeros_rotacao45.pgm");
+	
 
 	/*
 	 //pontos do triângulo em coordenadas homogeneas 
