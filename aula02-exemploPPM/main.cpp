@@ -149,7 +149,7 @@ int main(void)
 
 	ler(&imgOriginal,"spider.ppm");
 	converterRGB(&imgOriginal);
-	gravar(&imgOriginal);
+	gravar(&imgOriginal, "exer9.ppm");
 	destruir(&imgOriginal);
 
 	

@@ -88,6 +88,24 @@ void criar(PPM *ppm, int largura, int altura, const RGB planofundo)
     }
 }
 
+void criarPGM(PPM *pgm, int largura, int altura)
+{
+    if (pgm->pixels)
+        delete pgm->pixels;
+    
+    int tamanho = largura * altura;
+
+    pgm->tipo = "P2";
+    pgm->larg = largura;
+    pgm->alt = altura;
+    pgm->vmax = 255;
+    pgm->pixels = new unsigned char[tamanho];
+
+    // definir a cor preta para todos os pixels
+    for (int i = 0; i < tamanho; i++)
+        pgm->pixels[i] = 0;
+}
+
 bool gravar(PPM *ppm, string caminho)
 {
     // Boa prática: checar se o ponteiro ppm não é nulo antes de acessar ppm->pixels
@@ -339,7 +357,7 @@ void setRecorte(PPM *ppm, PPM *pgmAux, Ponto p1, Ponto p2){
 
 void converterRGB(PPM *ppm ){
     PPM pgm;
-    criar(&pgm, ppm->larg, ppm->alt, RGB(0,0,0) );
+    criarPGM(&pgm, ppm->larg, ppm->alt);
     int tamanho = ppm->larg * ppm->alt * 3;
     RGB rgb;
     for (int i = 0; i < tamanho; i+=3){
@@ -348,11 +366,10 @@ void converterRGB(PPM *ppm ){
         rgb.r = ppm->pixels[i];
         rgb.g = ppm->pixels[i+1];
         rgb.b = ppm->pixels[i+2];
-
         //set
-        ppm->pixels[i] = rgb.r*0.299;
-        ppm->pixels[i+1] = rgb.g*0.587;
-        ppm->pixels[i+2] = rgb.b*0.114;
+        ppm->pixels[i] = rgb.r*0.299 + rgb.g*0.587 + rgb.b*0.114;
+        ppm->pixels[i+1] = rgb.r*0.299 + rgb.g*0.587 + rgb.b*0.114;
+        ppm->pixels[i+2] = rgb.r*0.299 + rgb.g*0.587 + rgb.b*0.114;
      }
     
 }

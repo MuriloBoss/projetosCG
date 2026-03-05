@@ -11,7 +11,7 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true, //para abrir em um terminal novo
+            "externalConsole": false, //para abrir em um terminal novo
             "MIMode": "gdb",
             "miDebuggerPath": "gdb.exe",
             "setupCommands": [
