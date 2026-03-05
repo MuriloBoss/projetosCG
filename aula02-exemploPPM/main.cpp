@@ -144,6 +144,16 @@ int main(void)
 	destruir(&imgRecorte);
 	
 
+	//exer 9 
+	PPM imgOriginal;
+
+	ler(&imgOriginal,"spider.ppm");
+	converterRGB(&imgOriginal);
+	gravar(&imgOriginal);
+	destruir(&imgOriginal);
+
+	
+
 
 
 

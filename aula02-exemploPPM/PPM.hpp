@@ -337,5 +337,24 @@ void setRecorte(PPM *ppm, PPM *pgmAux, Ponto p1, Ponto p2){
     }
 }
 
+void converterRGB(PPM *ppm ){
+    PPM pgm;
+    criar(&pgm, ppm->larg, ppm->alt, RGB(0,0,0) );
+    int tamanho = ppm->larg * ppm->alt * 3;
+    RGB rgb;
+    for (int i = 0; i < tamanho; i+=3){
+        
+        //get
+        rgb.r = ppm->pixels[i];
+        rgb.g = ppm->pixels[i+1];
+        rgb.b = ppm->pixels[i+2];
+
+        //set
+        ppm->pixels[i] = rgb.r*0.299;
+        ppm->pixels[i+1] = rgb.g*0.587;
+        ppm->pixels[i+2] = rgb.b*0.114;
+     }
+    
+}
 
 #endif
