@@ -188,8 +188,6 @@ bool ler(PPM *ppm, string caminho)
     }
 
     // LER LARGURA, ALTURA e VMAX
-    // Em vez de ler por linha, alimentamos uma única stringstream com as 
-    // próximas linhas até conseguirmos extrair os 3 valores, ignorando comentários.
     int valoresLidos = 0;
     int dimensoes[3]; // Guarda: [0] = larg, [1] = alt, [2] = vmax
 
@@ -213,7 +211,6 @@ bool ler(PPM *ppm, string caminho)
     ppm->alt = dimensoes[1];
     ppm->vmax = dimensoes[2];
 
-    // CORREÇÃO DO DELETE: Usar delete[] para arrays
     if (ppm->pixels)
         delete[] ppm->pixels;
 
@@ -357,8 +354,6 @@ void setRecorte(PPM *ppm, PPM *pgmAux, Ponto p1, Ponto p2){
 }
 
 void converterRGB(PPM *ppm ){
-    PPM pgm;
-    criarPGM(&pgm, ppm->larg, ppm->alt);
     int tamanho = ppm->larg * ppm->alt * 3;
     RGB rgb;
     for (int i = 0; i < tamanho; i+=3){
@@ -383,6 +378,27 @@ void setFlip(PPM *ppm){
             setPixel(ppm, ppm->larg-1-x,y, temp);
         }
     }
+}
+
+void setInverterRGB(PPM *ppm)
+{
+    PPM invertida;
+    criar(&invertida, ppm->larg, ppm->alt, RGB(0,0,0));
+    int tamanho = ppm->larg * ppm->alt * 3;
+    RGB rgb;
+    for (int i = 0; i < tamanho; i+=3){
+        
+        //get
+        rgb.r = ppm->pixels[i];
+        rgb.g = ppm->pixels[i+1];
+        rgb.b = ppm->pixels[i+2];
+        //set
+        invertida.pixels[i] = 255- rgb.r;
+        invertida.pixels[i+1] = 255 - rgb.g;
+        invertida.pixels[i+2] = 255 - rgb.b;
+     }
+     gravar(&invertida, "imgInvertida.ppm");
+     destruir(&invertida);
 }
 
 #endif

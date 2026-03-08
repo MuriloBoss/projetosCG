@@ -183,6 +183,14 @@ int main(void)
 
 	//Exer 12 - 
 	
+
+
+	//Exer 13 - inverter cores RGB
+	PPM imgOriginal;
+	PPM imgInvertida;
+	ler(&imgOriginal, "numeros.ppm");
+	setInverterRGB(&imgOriginal);
+	
 	cout << "Pressione uma tecla para encerrar o programa.\n";
 	getchar();
 	return EXIT_SUCCESS; 
