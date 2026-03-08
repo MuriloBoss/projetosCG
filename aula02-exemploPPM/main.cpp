@@ -122,6 +122,7 @@ int main(void)
 	destruir(&imgLinhas);
 	*/
 
+	/*
 	//exer 08 - 
 	PPM imgRecorte;
 	PPM imgRecorte_aux;
@@ -142,8 +143,9 @@ int main(void)
 
 	destruir(&imgRecorte_aux);
 	destruir(&imgRecorte);
-	
+	*/
 
+	/*
 	//exer 9 
 	PPM imgOriginal;
 
@@ -151,12 +153,35 @@ int main(void)
 	converterRGB(&imgOriginal);
 	gravar(&imgOriginal, "exer9.ppm");
 	destruir(&imgOriginal);
+	*/
 
-	
+	/*
+	//exer 10
+	PPM imgFlip;
+    cout << "\n\n#Exemplo 10 - Flip Vertical#\n";
+    ler(&imgFlip, "numeros.ppm");
+	setFlip(&imgFlip);
+	gravar(&imgFlip, "exercicio10.pgm");
+    destruir(&imgFlip);
+	*/
 
+	/*
+	//Exer 11 - borda p1 p2 com espessura
+	PPM img1;
+	//criar(&img1, 100, 80, RGB(0,0,0));
+	ler(&img1, "numeros.ppm");
+	cout << "Imagem Lida\n";
+	Ponto p1 = {200,0};
+	Ponto p2 = {375,270};
 
+	setFillBorda(&img1, p1, p2 , RGB(0,255,0), 3);
+	cout << "Função concluida\n";
+	gravar(&img1, "exercicio11.ppm");
+	cout << "Imagem gravada\n";
+	destruir(&img1);
+	*/
 
-
+	//Exer 12 - 
 	
 	cout << "Pressione uma tecla para encerrar o programa.\n";
 	getchar();

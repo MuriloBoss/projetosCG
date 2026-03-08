@@ -325,13 +325,14 @@ struct Ponto{
     int y;
 };
 
-void setFillBorda(PPM *ppm, Ponto p1, Ponto p2, const RGB cor){
+void setFillBorda(PPM *ppm, Ponto p1, Ponto p2, const RGB cor, int espessura){
     if (!ppm || !ppm->pixels)
         return;
     
     for(int y = p1.y; y <= p2.y; y++){
         for(int x = p1.x; x <= p2.x; x++){
-            if(x == p1.x || x == p2.x || y == p1.y || y == p2.y){
+            if(x < p1.x + espessura || x > p2.x - espessura|| 
+               y < p1.y + espessura || y > p2.y - espessura){
                 if(coordValida(ppm, x, y)){
                     ppm->pixels[y * ppm->larg*3 + x*3] = cor.r;
                     ppm->pixels[y * ppm->larg*3 + x*3 + 1] = cor.g;
@@ -372,6 +373,16 @@ void converterRGB(PPM *ppm ){
         ppm->pixels[i+2] = rgb.r*0.299 + rgb.g*0.587 + rgb.b*0.114;
      }
     
+}
+
+void setFlip(PPM *ppm){
+    for(int y=0; y < ppm->alt ;y++){
+        for(int x=0; x<ppm->larg/2;x++){
+            RGB temp = getPixel(ppm, x,y);
+            setPixel(ppm,x,y, getPixel(ppm, ppm->larg-1-x, y));
+            setPixel(ppm, ppm->larg-1-x,y, temp);
+        }
+    }
 }
 
 #endif
