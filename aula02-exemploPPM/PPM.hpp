@@ -514,4 +514,49 @@ void setQuantizacao(PPM *ppm){
 }
 
 
+void DDALine(PPM *img, int x0, int y0, int x1, int y1, RGB rgb)
+{
+
+    // Calculate dx and dy
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+
+    int step;
+
+    // If dx > dy we will take step as dx
+    // else we will take step as dy to draw the complete
+    // line
+    if (abs(dx) > abs(dy))
+        step = abs(dx);
+    else
+        step = abs(dy);
+
+    // Calculate x-increment and y-increment for each step
+    float x_incr = (float)dx / step;
+    float y_incr = (float)dy / step;
+
+    // Take the initial points as x and y
+    float x = x0;
+    float y = y0;
+
+    for (int i = 0; i < step; i++) {
+
+		setPixel(img, x, y, rgb);
+        // putpixel(round(x), round(y), WHITE);
+        //cout << round(x) << " " << round(y) << "\n";
+        x += x_incr;
+        y += y_incr;
+        // delay(10);
+    }
+}
+
+void exer15(){
+	PPM img;
+	criar(&img, 200, 80, RGB(0,0,0));
+	RGB corL(255,0,0);
+	DDALine(&img, 0, 0, img.larg-1, img.alt-1, corL);
+	DDALine(&img, 0, img.alt-1, img.larg-1, 0, corL);
+
+	gravar(&img, "exercicio15.pgm");
+}
 #endif

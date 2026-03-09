@@ -203,6 +203,7 @@ int main(void)
 	setInverterRGB(&imgOriginal);
 	*/
 
+	/*
 	//Exer 14 - quantização
 	PPM imgQ;
 	cout<< "Rodando exer 14\n";
@@ -229,7 +230,10 @@ int main(void)
 	destruir(&img2);
 	destruir(&img3);
 	destruir(&img4);
-	
+	*/
+
+	//EXER 15 
+	exer15();
 	
 
 	cout << "Pressione uma tecla para encerrar o programa.\n";
