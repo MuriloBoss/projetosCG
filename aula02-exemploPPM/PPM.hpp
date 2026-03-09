@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
 using namespace std;
 
 struct PPM
@@ -64,6 +65,24 @@ void imprimir(PPM *ppm)
         cout << "Vetor de pixels: " << &(ppm->pixels) << endl;
     else
         cout << "Vetor de pixels: NULL\n";
+}
+
+void criarMosaico(PPM *ppm, int largura, int altura)
+{
+    if (ppm->pixels)
+        delete ppm->pixels;
+    
+    int tamanho = largura * altura * 3; //vezes 3, pois cada pixel possui RGB
+
+    ppm->tipo = "P3";
+    ppm->larg = largura;
+    ppm->alt = altura;
+    ppm->vmax = 255;
+    ppm->pixels = new unsigned char[tamanho];
+
+    // definir a cor preta para todos os pixels
+    for (int i = 0; i < tamanho; i++)
+        ppm->pixels[i] = 0;
 }
 
 void criar(PPM *ppm, int largura, int altura, const RGB planofundo)
@@ -399,6 +418,80 @@ void setInverterRGB(PPM *ppm)
      }
      gravar(&invertida, "imgInvertida.ppm");
      destruir(&invertida);
+}
+
+void mosaico()
+{
+    ifstream arq("imagens.txt");
+
+    if (!arq.is_open())
+    {
+        cout << "Erro.\n";
+        return;
+    }
+
+    vector<PPM> imagens;
+    string nome;
+
+    while (getline(arq, nome))
+    {
+        if (nome.empty())
+            continue;
+
+        PPM img;
+        if (!ler(&img, nome))
+        {
+            cout << "Erro ao ler imagem: " << nome << endl;
+            continue;
+        }
+
+        imagens.push_back(img);
+    }
+
+    arq.close();
+
+    if (imagens.size() == 0)
+    {
+        cout << "Nenhuma imagem carregada.\n";
+        return;
+    }
+
+    int L = imagens[0].larg;
+    int A = imagens[0].alt;
+
+    for (int i = 1; i < imagens.size(); i++)
+    {
+        if (imagens[i].larg != L || imagens[i].alt != A)
+        {
+            cout << "Erro: Todas as imagens devem ter a mesma dimensão.\n";
+            return;
+        }
+    }
+
+    int N = imagens.size();
+    PPM saida;
+    criarMosaico(&saida, L * N, A);
+
+    for (int k = 0; k < N; k++)
+    {
+        for (int y = 0; y < A; y++)
+        {
+            for (int x = 0; x < L; x++)
+            {
+                RGB cor = getPixel(&imagens[k], x, y);
+                setPixel(&saida, x + k * L, y, cor);
+            }
+        }
+    }
+
+    gravar(&saida, "exerc12.ppm");
+
+    for (int i = 0; i < imagens.size(); i++)
+        destruir(&imagens[i]);
+
+    destruir(&saida);
+
+    cout << "Mosaico criado com sucesso!\n";
 }
 
 #endif

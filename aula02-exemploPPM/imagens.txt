@@ -1,0 +1,4 @@
+img1.ppm
+img2.ppm
+img3.ppm
+img4.ppm

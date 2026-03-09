@@ -191,6 +191,19 @@ int main(void)
 	ler(&imgOriginal, "numeros.ppm");
 	setInverterRGB(&imgOriginal);
 	
+
+	PPM img1, img2, img3, img4;
+	criar(&img1, 500, 500, RGB(0,0,0));
+	criar(&img2, 500, 500, RGB(255,0,0));
+	criar(&img3, 500, 500, RGB(0,255,0));
+	criar(&img4, 500, 500, RGB(0,0,255));
+	gravar(&img1, "img1.ppm");
+	gravar(&img2, "img2.ppm");
+	gravar(&img3, "img3.ppm");
+	gravar(&img4, "img4.ppm");
+
+	mosaico();
+
 	cout << "Pressione uma tecla para encerrar o programa.\n";
 	getchar();
 	return EXIT_SUCCESS; 
