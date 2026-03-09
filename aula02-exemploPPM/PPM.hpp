@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <cmath>
 using namespace std;
 
 struct PPM
@@ -493,5 +494,24 @@ void mosaico()
 
     cout << "Mosaico criado com sucesso!\n";
 }
+
+void setQuantizacao(PPM *ppm){
+    if(!ppm || !ppm->pixels){
+        return;
+    }
+
+    int tamanho = ppm->larg * ppm->alt *3;
+
+    //Q - 1 = 3 
+    double salto = 255.0 / 3;
+
+    for(int i =0; i < tamanho; i++){
+        int corOriginal = ppm->pixels[i];
+        int novaCor = round(corOriginal / salto) * salto;
+
+        ppm->pixels[i] = (unsigned char)novaCor;
+    }
+}
+
 
 #endif

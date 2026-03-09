@@ -180,18 +180,8 @@ int main(void)
 	cout << "Imagem gravada\n";
 	destruir(&img1);
 	*/
-
+	/*
 	//Exer 12 - 
-	
-
-
-	//Exer 13 - inverter cores RGB
-	PPM imgOriginal;
-	PPM imgInvertida;
-	ler(&imgOriginal, "numeros.ppm");
-	setInverterRGB(&imgOriginal);
-	
-
 	PPM img1, img2, img3, img4;
 	criar(&img1, 500, 500, RGB(0,0,0));
 	criar(&img2, 500, 500, RGB(255,0,0));
@@ -203,6 +193,44 @@ int main(void)
 	gravar(&img4, "img4.ppm");
 
 	mosaico();
+	*/
+
+	/*
+	//Exer 13 - inverter cores RGB
+	PPM imgOriginal;
+	PPM imgInvertida;
+	ler(&imgOriginal, "numeros.ppm");
+	setInverterRGB(&imgOriginal);
+	*/
+
+	//Exer 14 - quantização
+	PPM imgQ;
+	cout<< "Rodando exer 14\n";
+	ler(&imgQ, "numeros.ppm");
+	PPM img1, img2, img3, img4;
+	criar(&img1, 500, 500, RGB(225,0,0));
+	criar(&img2, 500, 500, RGB(255,0,0));
+	criar(&img3, 500, 500, RGB(240,0,0));
+	criar(&img4, 500, 500, RGB(230,0,0));
+	setQuantizacao(&imgQ);
+	setQuantizacao(&img1);
+	setQuantizacao(&img2);
+	setQuantizacao(&img3);
+	setQuantizacao(&img4);
+
+	gravar(&img1, "img1.ppm");
+	gravar(&img2, "img2.ppm");
+	gravar(&img3, "img3.ppm");
+	gravar(&img4, "img4.ppm");
+	gravar(&imgQ, "exer14.ppm");
+
+	destruir(&imgQ);
+	destruir(&img1);
+	destruir(&img2);
+	destruir(&img3);
+	destruir(&img4);
+	
+	
 
 	cout << "Pressione uma tecla para encerrar o programa.\n";
 	getchar();
