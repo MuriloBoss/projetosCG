@@ -4,6 +4,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
+#include <cmath>
 using namespace std;
 
 struct PPM
@@ -64,6 +66,24 @@ void imprimir(PPM *ppm)
         cout << "Vetor de pixels: " << &(ppm->pixels) << endl;
     else
         cout << "Vetor de pixels: NULL\n";
+}
+
+void criarMosaico(PPM *ppm, int largura, int altura)
+{
+    if (ppm->pixels)
+        delete ppm->pixels;
+    
+    int tamanho = largura * altura * 3; //vezes 3, pois cada pixel possui RGB
+
+    ppm->tipo = "P3";
+    ppm->larg = largura;
+    ppm->alt = altura;
+    ppm->vmax = 255;
+    ppm->pixels = new unsigned char[tamanho];
+
+    // definir a cor preta para todos os pixels
+    for (int i = 0; i < tamanho; i++)
+        ppm->pixels[i] = 0;
 }
 
 void criar(PPM *ppm, int largura, int altura, const RGB planofundo)
@@ -188,8 +208,6 @@ bool ler(PPM *ppm, string caminho)
     }
 
     // LER LARGURA, ALTURA e VMAX
-    // Em vez de ler por linha, alimentamos uma única stringstream com as 
-    // próximas linhas até conseguirmos extrair os 3 valores, ignorando comentários.
     int valoresLidos = 0;
     int dimensoes[3]; // Guarda: [0] = larg, [1] = alt, [2] = vmax
 
@@ -213,7 +231,6 @@ bool ler(PPM *ppm, string caminho)
     ppm->alt = dimensoes[1];
     ppm->vmax = dimensoes[2];
 
-    // CORREÇÃO DO DELETE: Usar delete[] para arrays
     if (ppm->pixels)
         delete[] ppm->pixels;
 
@@ -325,13 +342,14 @@ struct Ponto{
     int y;
 };
 
-void setFillBorda(PPM *ppm, Ponto p1, Ponto p2, const RGB cor){
+void setFillBorda(PPM *ppm, Ponto p1, Ponto p2, const RGB cor, int espessura){
     if (!ppm || !ppm->pixels)
         return;
     
     for(int y = p1.y; y <= p2.y; y++){
         for(int x = p1.x; x <= p2.x; x++){
-            if(x == p1.x || x == p2.x || y == p1.y || y == p2.y){
+            if(x < p1.x + espessura || x > p2.x - espessura|| 
+               y < p1.y + espessura || y > p2.y - espessura){
                 if(coordValida(ppm, x, y)){
                     ppm->pixels[y * ppm->larg*3 + x*3] = cor.r;
                     ppm->pixels[y * ppm->larg*3 + x*3 + 1] = cor.g;
@@ -356,8 +374,6 @@ void setRecorte(PPM *ppm, PPM *pgmAux, Ponto p1, Ponto p2){
 }
 
 void converterRGB(PPM *ppm ){
-    PPM pgm;
-    criarPGM(&pgm, ppm->larg, ppm->alt);
     int tamanho = ppm->larg * ppm->alt * 3;
     RGB rgb;
     for (int i = 0; i < tamanho; i+=3){
@@ -374,4 +390,173 @@ void converterRGB(PPM *ppm ){
     
 }
 
+void setFlip(PPM *ppm){
+    for(int y=0; y < ppm->alt ;y++){
+        for(int x=0; x<ppm->larg/2;x++){
+            RGB temp = getPixel(ppm, x,y);
+            setPixel(ppm,x,y, getPixel(ppm, ppm->larg-1-x, y));
+            setPixel(ppm, ppm->larg-1-x,y, temp);
+        }
+    }
+}
+
+void setInverterRGB(PPM *ppm)
+{
+    PPM invertida;
+    criar(&invertida, ppm->larg, ppm->alt, RGB(0,0,0));
+    int tamanho = ppm->larg * ppm->alt * 3;
+    RGB rgb;
+    for (int i = 0; i < tamanho; i+=3){
+        
+        //get
+        rgb.r = ppm->pixels[i];
+        rgb.g = ppm->pixels[i+1];
+        rgb.b = ppm->pixels[i+2];
+        //set
+        invertida.pixels[i] = 255- rgb.r;
+        invertida.pixels[i+1] = 255 - rgb.g;
+        invertida.pixels[i+2] = 255 - rgb.b;
+     }
+     gravar(&invertida, "imgInvertida.ppm");
+     destruir(&invertida);
+}
+
+void mosaico()
+{
+    ifstream arq("imagens.txt");
+
+    if (!arq.is_open())
+    {
+        cout << "Erro.\n";
+        return;
+    }
+
+    vector<PPM> imagens;
+    string nome;
+
+    while (getline(arq, nome))
+    {
+        if (nome.empty())
+            continue;
+
+        PPM img;
+        if (!ler(&img, nome))
+        {
+            cout << "Erro ao ler imagem: " << nome << endl;
+            continue;
+        }
+
+        imagens.push_back(img);
+    }
+
+    arq.close();
+
+    if (imagens.size() == 0)
+    {
+        cout << "Nenhuma imagem carregada.\n";
+        return;
+    }
+
+    int L = imagens[0].larg;
+    int A = imagens[0].alt;
+
+    for (int i = 1; i < imagens.size(); i++)
+    {
+        if (imagens[i].larg != L || imagens[i].alt != A)
+        {
+            cout << "Erro: Todas as imagens devem ter a mesma dimensão.\n";
+            return;
+        }
+    }
+
+    int N = imagens.size();
+    PPM saida;
+    criarMosaico(&saida, L * N, A);
+
+    for (int k = 0; k < N; k++)
+    {
+        for (int y = 0; y < A; y++)
+        {
+            for (int x = 0; x < L; x++)
+            {
+                RGB cor = getPixel(&imagens[k], x, y);
+                setPixel(&saida, x + k * L, y, cor);
+            }
+        }
+    }
+
+    gravar(&saida, "exerc12.ppm");
+
+    for (int i = 0; i < imagens.size(); i++)
+        destruir(&imagens[i]);
+
+    destruir(&saida);
+
+    cout << "Mosaico criado com sucesso!\n";
+}
+
+void setQuantizacao(PPM *ppm){
+    if(!ppm || !ppm->pixels){
+        return;
+    }
+
+    int tamanho = ppm->larg * ppm->alt *3;
+
+    //Q - 1 = 3 
+    double salto = 255.0 / 3;
+
+    for(int i =0; i < tamanho; i++){
+        int corOriginal = ppm->pixels[i];
+        int novaCor = round(corOriginal / salto) * salto;
+
+        ppm->pixels[i] = (unsigned char)novaCor;
+    }
+}
+
+
+void DDALine(PPM *img, int x0, int y0, int x1, int y1, RGB rgb)
+{
+
+    // Calculate dx and dy
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+
+    int step;
+
+    // If dx > dy we will take step as dx
+    // else we will take step as dy to draw the complete
+    // line
+    if (abs(dx) > abs(dy))
+        step = abs(dx);
+    else
+        step = abs(dy);
+
+    // Calculate x-increment and y-increment for each step
+    float x_incr = (float)dx / step;
+    float y_incr = (float)dy / step;
+
+    // Take the initial points as x and y
+    float x = x0;
+    float y = y0;
+
+    for (int i = 0; i < step; i++) {
+
+		setPixel(img, x, y, rgb);
+        // putpixel(round(x), round(y), WHITE);
+        //cout << round(x) << " " << round(y) << "\n";
+        x += x_incr;
+        y += y_incr;
+        // delay(10);
+    }
+}
+
+void exer15(){
+	PPM img;
+	criar(&img, 200, 80, RGB(0,0,0));
+	RGB corL(255,0,0);
+	DDALine(&img, 0, 0, img.larg-1, img.alt-1, corL);
+	DDALine(&img, 0, img.alt-1, img.larg-1, 0, corL);
+
+	gravar(&img, "exercicio15.pgm");
+}
 #endif

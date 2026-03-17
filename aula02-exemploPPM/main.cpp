@@ -122,6 +122,7 @@ int main(void)
 	destruir(&imgLinhas);
 	*/
 
+	/*
 	//exer 08 - 
 	PPM imgRecorte;
 	PPM imgRecorte_aux;
@@ -142,8 +143,9 @@ int main(void)
 
 	destruir(&imgRecorte_aux);
 	destruir(&imgRecorte);
-	
+	*/
 
+	/*
 	//exer 9 
 	PPM imgOriginal;
 
@@ -151,13 +153,89 @@ int main(void)
 	converterRGB(&imgOriginal);
 	gravar(&imgOriginal, "exer9.ppm");
 	destruir(&imgOriginal);
+	*/
 
+	/*
+	//exer 10
+	PPM imgFlip;
+    cout << "\n\n#Exemplo 10 - Flip Vertical#\n";
+    ler(&imgFlip, "numeros.ppm");
+	setFlip(&imgFlip);
+	gravar(&imgFlip, "exercicio10.pgm");
+    destruir(&imgFlip);
+	*/
+
+	/*
+	//Exer 11 - borda p1 p2 com espessura
+	PPM img1;
+	//criar(&img1, 100, 80, RGB(0,0,0));
+	ler(&img1, "numeros.ppm");
+	cout << "Imagem Lida\n";
+	Ponto p1 = {200,0};
+	Ponto p2 = {375,270};
+
+	setFillBorda(&img1, p1, p2 , RGB(0,255,0), 3);
+	cout << "Função concluida\n";
+	gravar(&img1, "exercicio11.ppm");
+	cout << "Imagem gravada\n";
+	destruir(&img1);
+	*/
+	/*
+	//Exer 12 - 
+	PPM img1, img2, img3, img4;
+	criar(&img1, 500, 500, RGB(0,0,0));
+	criar(&img2, 500, 500, RGB(255,0,0));
+	criar(&img3, 500, 500, RGB(0,255,0));
+	criar(&img4, 500, 500, RGB(0,0,255));
+	gravar(&img1, "img1.ppm");
+	gravar(&img2, "img2.ppm");
+	gravar(&img3, "img3.ppm");
+	gravar(&img4, "img4.ppm");
+
+	mosaico();
+	*/
+
+	/*
+	//Exer 13 - inverter cores RGB
+	PPM imgOriginal;
+	PPM imgInvertida;
+	ler(&imgOriginal, "numeros.ppm");
+	setInverterRGB(&imgOriginal);
+	*/
+
+	/*
+	//Exer 14 - quantização
+	PPM imgQ;
+	cout<< "Rodando exer 14\n";
+	ler(&imgQ, "numeros.ppm");
+	PPM img1, img2, img3, img4;
+	criar(&img1, 500, 500, RGB(225,0,0));
+	criar(&img2, 500, 500, RGB(255,0,0));
+	criar(&img3, 500, 500, RGB(240,0,0));
+	criar(&img4, 500, 500, RGB(230,0,0));
+	setQuantizacao(&imgQ);
+	setQuantizacao(&img1);
+	setQuantizacao(&img2);
+	setQuantizacao(&img3);
+	setQuantizacao(&img4);
+
+	gravar(&img1, "img1.ppm");
+	gravar(&img2, "img2.ppm");
+	gravar(&img3, "img3.ppm");
+	gravar(&img4, "img4.ppm");
+	gravar(&imgQ, "exer14.ppm");
+
+	destruir(&imgQ);
+	destruir(&img1);
+	destruir(&img2);
+	destruir(&img3);
+	destruir(&img4);
+	*/
+
+	//EXER 15 
+	exer15();
 	
 
-
-
-
-	
 	cout << "Pressione uma tecla para encerrar o programa.\n";
 	getchar();
 	return EXIT_SUCCESS; 
