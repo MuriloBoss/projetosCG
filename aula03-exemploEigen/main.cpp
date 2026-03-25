@@ -37,7 +37,9 @@ Matrix3f getRotacao(float ang)
 	return T;
 }
 
-Matrix3f getCisalhamentoHorizontal(float fatorX, float fatorY){
+
+//horizontal muda o x e vertical o y
+Matrix3f getCisalhamento(float fatorX, float fatorY){
 	Matrix3f T = Matrix3f::Identity();
 	T(0,1) = fatorX;
 	T(1,0) = fatorY;
@@ -142,7 +144,7 @@ void exer1Lista4(){
 	Matrix3f T = getTranslacao(pontoCentro.x(), pontoCentro.y());
 	Matrix3f Tinv = getTranslacao(-pontoCentro.x(), -pontoCentro.y());
 
-	Matrix3f CIS = getCisalhamentoHorizontal(0.9f,0.0f);
+	Matrix3f CIS = getCisalhamento(0.9f,0.0f);
 
 	Matrix3f REF = getEscala(-1.0f, 1.0f);
 
@@ -158,6 +160,29 @@ void exer1Lista4(){
 	
 }
 
+void exer2Lista4(){
+	PGM imgE, imgS;
+	ler(&imgE, "numeros.pgm");
+	criar(&imgS, imgE.larg, imgE.alt, 0);
+
+	Vector2f pontoCentro(imgE.larg/2.0, imgE.alt/2.0);
+
+	Matrix3f T = getTranslacao(pontoCentro.x(), pontoCentro.y());
+	Matrix3f Tinv = getTranslacao(-pontoCentro.x(), -pontoCentro.y());
+
+	Matrix3f R = getRotacao(15.0f);
+	Matrix3f E = getEscala(0.5f, 0.5f);
+	Matrix3f R2 = getRotacao(20.0f);
+	Matrix3f CIS = getCisalhamento(0.0f, 0.7f);
+
+	Matrix3f M = T * CIS * R2 * E * R * Tinv;
+
+	Matrix3f Minv = M.inverse();
+
+	transf2DInv(&imgE, &imgS, Minv);
+	gravar(&imgS, "saidaExer2.pgm");
+}
+
 int main(void)
 {
 	setlocale(LC_ALL, "Portuguese");
@@ -167,10 +192,11 @@ int main(void)
 
 	//exemploRotacao();
 
-	cout << "Chamando exercicio 1 - lista 4\n";
-	exer1Lista4();
+	// cout << "Chamando exercicio 1 - lista 4\n";
+	// exer1Lista4();
 
-	
+	cout << "Chamando exercicio 2 - lista 4\n";
+	exer2Lista4();
 
 
 	
