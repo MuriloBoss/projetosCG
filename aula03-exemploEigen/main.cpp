@@ -37,6 +37,23 @@ Matrix3f getRotacao(float ang)
 	return T;
 }
 
+
+//horizontal muda o x e vertical o y
+Matrix3f getCisalhamento(float fatorX, float fatorY){
+	Matrix3f T = Matrix3f::Identity();
+	T(0,1) = fatorX;
+	T(1,0) = fatorY;
+	return T;
+}
+
+Matrix3f getEscala(float sx, float sy)
+{
+	Matrix3f E = Matrix3f::Identity();
+	E(0, 0) = sx;
+	E(1, 1) = sy;
+	return E;
+}
+
 void exerLista3F()
 {
 	Vector2f pontoCentro(6.0f,4.0f);
@@ -84,9 +101,9 @@ void transf2DInv(PGM* imgE, PGM* imgS, Matrix3f Minv)
 	if (imgE->larg!=imgS->larg || imgE->alt!=imgS->alt)
 		return;
 	
-	for (size_t yS = 0; yS < imgE->alt; yS++)
+	for (size_t yS = 0; yS < imgE->alt; yS++) 
 	{
-		for (size_t xS = 0; xS < imgE->alt; xS++)
+		for (size_t xS = 0; xS < imgE->larg; xS++)
 		{
 			Vector3f coordEntrada = Minv * Vector3f(xS, yS, 1);
 			float xE = round(coordEntrada.x());
@@ -99,13 +116,7 @@ void transf2DInv(PGM* imgE, PGM* imgS, Matrix3f Minv)
 	}
 }
 
-int main(void)
-{
-	setlocale(LC_ALL, "Portuguese");
-
-	//cout << "Chamando exercicio 3f\n";
-	// exerLista3F();
-
+void exemploRotacao(){
 	PGM imgE, imgS;
 	ler(&imgE, "numeros.pgm");
 	criar(&imgS, imgE.larg, imgE.alt, 0);
@@ -114,7 +125,6 @@ int main(void)
 	Matrix3f T = getTranslacao(pontoCentro.x(), pontoCentro.y());
 	Matrix3f Tinv = getTranslacao(-pontoCentro.x(), -pontoCentro.y());
 	Matrix3f R = getRotacao(45.0f);
-
 	Matrix3f M = T * R * Tinv;
 
 	Matrix3f Minv = M.inverse();
@@ -122,6 +132,73 @@ int main(void)
 	gravar(&imgS, "numeros_rotacaoinv.pgm");
 	transf2D (&imgE, &imgS, M);
 	gravar(&imgS, "numeros_rotacao45.pgm");
+}
+
+void exer1Lista4(){
+	PGM imgE, imgS;
+	ler(&imgE, "numeros.pgm");
+	criar(&imgS, imgE.larg, imgE.alt, 0);
+
+	Vector2f pontoCentro(imgE.larg/2.0, imgE.alt/2.0);
+
+	Matrix3f T = getTranslacao(pontoCentro.x(), pontoCentro.y());
+	Matrix3f Tinv = getTranslacao(-pontoCentro.x(), -pontoCentro.y());
+
+	Matrix3f CIS = getCisalhamento(0.9f,0.0f);
+
+	Matrix3f REF = getEscala(-1.0f, 1.0f);
+
+	//A ordem de leitura/execução é da DIREITA para a ESQUeRDA;
+	//Então -> Tinv, depois CIS, depois REF, e por fim T
+	Matrix3f M = T * REF * CIS * Tinv;
+
+	//Calcular a inversa da matriz composta para usarmos no Mapeamento Inverso
+	Matrix3f Minv = M.inverse();
+
+	transf2DInv(&imgE, &imgS, Minv);
+	gravar(&imgS, "numeros_cisalhamento.pgm");
+	
+}
+
+void exer2Lista4(){
+	PGM imgE, imgS;
+	ler(&imgE, "numeros.pgm");
+	criar(&imgS, imgE.larg, imgE.alt, 0);
+
+	Vector2f pontoCentro(imgE.larg/2.0, imgE.alt/2.0);
+
+	Matrix3f T = getTranslacao(pontoCentro.x(), pontoCentro.y());
+	Matrix3f Tinv = getTranslacao(-pontoCentro.x(), -pontoCentro.y());
+
+	Matrix3f R = getRotacao(15.0f);
+	Matrix3f E = getEscala(0.5f, 0.5f);
+	Matrix3f R2 = getRotacao(20.0f);
+	Matrix3f CIS = getCisalhamento(0.0f, 0.7f);
+
+	Matrix3f M = T * CIS * R2 * E * R * Tinv;
+
+	Matrix3f Minv = M.inverse();
+
+	transf2DInv(&imgE, &imgS, Minv);
+	gravar(&imgS, "saidaExer2.pgm");
+}
+
+int main(void)
+{
+	setlocale(LC_ALL, "Portuguese");
+
+	// cout << "Chamando exercicio 3f\n";
+	//  exerLista3F();
+
+	//exemploRotacao();
+
+	// cout << "Chamando exercicio 1 - lista 4\n";
+	// exer1Lista4();
+
+	cout << "Chamando exercicio 2 - lista 4\n";
+	exer2Lista4();
+
+
 	
 
 	/*
