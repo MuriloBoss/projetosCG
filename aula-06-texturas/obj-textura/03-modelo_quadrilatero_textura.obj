@@ -1,0 +1,18 @@
+#nome do arquivo do material
+mtllib materialmaca.mtl
+
+#vertices
+v -0.5 0 -2
+v 0.5 0 -2
+v 0.5 1 -2
+v -0.5 1 -2 
+
+#coordenadas de textura
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+#faces com as coordenadas de textura
+usemtl matMaca
+f 1/1 2/2 3/3 4/4 
