@@ -1,5 +1,7 @@
 #include <iostream>
-#include<cmath>
+#include <cmath>
+#include <vector>
+#include <algorithm>
 #include "PGM.hpp"
 using namespace std;
 
@@ -99,14 +101,55 @@ void transf2DInv(PGM* imgE, PGM* imgS, Matrix3f Minv)
 	}
 }
 
+unsigned char calcularMediana(PGM *pgm, int x, int y)
+{
+	int dx[] = {1, -1, 0,  0, -1,  1, -1, 1};
+	int dy[] = {0,  0, 1, -1, -1, -1,  1, 1};
+
+	vector<int> vizinhos;
+	for (int i = 0; i < 8; i++)
+	{
+		int nx = x + dx[i], ny = y + dy[i];
+		if (coordValida(pgm, nx, ny))
+		{
+			int cor = getPixel(pgm, nx, ny);
+			if (cor != 0)
+				vizinhos.push_back(cor);
+		}
+	}
+
+	if (vizinhos.empty()) return 0;
+
+	sort(vizinhos.begin(), vizinhos.end());
+	int n = vizinhos.size();
+	if (n % 2 == 1)
+		return (unsigned char)vizinhos[n / 2];
+	else
+		return (unsigned char)((vizinhos[n/2 - 1] + vizinhos[n/2]) / 2);
+}
+
+void preencherBuracos(PGM *pgm)
+{
+	for (int y = 0; y < pgm->alt; y++)
+		for (int x = 0; x < pgm->larg; x++)
+			if (getPixel(pgm, x, y) == 0)
+				setPixel(pgm, x, y, calcularMediana(pgm, x, y));
+}
+
 int main(void)
 {
 	setlocale(LC_ALL, "Portuguese");
 
+	PGM imgE;
+	ler(&imgE, "entrada.pgm");
+	preencherBuracos(&imgE);
+	gravar(&imgE, "saida.pgm");
+	cout << "Imagem salva em saida.pgm\n";
+
 	//cout << "Chamando exercicio 3f\n";
 	// exerLista3F();
 
-	PGM imgE, imgS;
+	PGM imgS;
 	ler(&imgE, "numeros.pgm");
 	criar(&imgS, imgE.larg, imgE.alt, 0);
 
